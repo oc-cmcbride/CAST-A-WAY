@@ -25,7 +25,7 @@ from imageTools import *
 CONSTANTS
 '''
 # Image folder properties
-IMG_FOLDER = "test2photos\\"
+IMG_FOLDER = "Development\\Mesh Generation\\test2photos\\"
 NUM_IMAGES = 12
 
 # Camera parameters
@@ -40,7 +40,7 @@ BRIGHT_THRESH = 200
 # Model generation parameters
 #               X, Y, Z
 POINT_OFFSET = [0.1, 0.1, 0]
-WRITE_MESH_TO_FILE = True
+WRITE_MESH_TO_FILE = False
 MESH_FILE_NAME = "mesh.stl"
 
 '''
@@ -73,7 +73,7 @@ def main():
     print("Processing with the following parameters:")
     print(f"Resolution: {clConfig.xmax} x {clConfig.ymax}")
     print(f"Camera horizontal FOV: {clConfig.thetaFov:.4f} rad")
-    print(f"Laser distance: {clConfig.dlaser}")
+    print(f"Laser distance: {clConfig.dLaser}")
     print(f"Laser rotation: Z-axis: {clConfig.thetaLaser:.4f} rad, Y-axis: {clConfig.phiLaser:.4f} rad")
     for frame in frames:
         # Calculate new points

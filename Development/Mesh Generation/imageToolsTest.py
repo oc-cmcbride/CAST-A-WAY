@@ -65,7 +65,7 @@ test2()
 This test takes in an image and parameters for the depth equation and 
 prints the calculated depth at each point. 
 '''
-def test2(dlaser:float, thetaLaser:float, thetaFov:float, phiLaser:float, fileName:str, brightnessThreshold:int = 200):
+def test2(dLaser:float, thetaLaser:float, thetaFov:float, phiLaser:float, fileName:str, brightnessThreshold:int = 200):
     # Read in image
     frame = cv2.imread(fileName)
 
@@ -79,7 +79,7 @@ def test2(dlaser:float, thetaLaser:float, thetaFov:float, phiLaser:float, fileNa
     # Calculate depth values
     depths = []
     for [x, y] in points:
-        depths.append((dlaser) / (np.tan(thetaLaser) + np.tan(thetaFov * ((x - (y - 0.5*ymax)*np.tan(phiLaser)) / (xmax) - 0.5))))
+        depths.append((dLaser) / (np.tan(thetaLaser) + np.tan(thetaFov * ((x - (y - 0.5*ymax)*np.tan(phiLaser)) / (xmax) - 0.5))))
     
     # Print depth values
     
@@ -131,7 +131,7 @@ def test3(fileNames:list[str], config:CameraLaserConfig, blocking:bool=True, bri
 if __name__ == "__main__":
     # test1()
     '''
-    imageFolder = "test1photos"
+    imageFolder = "Development\\Mesh Generation\\test1photos"
     for i in range(8):
         print(f"--- Image {i} ---")
         # test1(f"{imageFolder}\\trial1capture{i:03d}.png", 250)
@@ -140,17 +140,17 @@ if __name__ == "__main__":
 
     # test2()
     '''
-    dlaser = 3.125
+    dLaser = 3.125
     thetaLaser = np.deg2rad(12.5)
     thetaFov = np.deg2rad(55)
     phiLaser = np.deg2rad(90-66.5)
-    test2(dlaser, thetaLaser, thetaFov, phiLaser, )
+    test2(dLaser, thetaLaser, thetaFov, phiLaser, )
     '''
     '''
     for i in range(8):
         print(f"--- Image {i} ---")
-        # test2(dlaser, thetaLaser, thetaFov, phiLaser, f"test1photos\\trial1capture{i:03d}.png", 250)
-        test2(dlaser, thetaLaser, thetaFov, phiLaser, f"test1photos\\trial2capture{i:03d}.png", 200)
+        # test2(dLaser, thetaLaser, thetaFov, phiLaser, f"test1photos\\trial1capture{i:03d}.png", 250)
+        test2(dLaser, thetaLaser, thetaFov, phiLaser, f"test1photos\\trial2capture{i:03d}.png", 200)
     '''
 
     # test3()
@@ -163,7 +163,7 @@ if __name__ == "__main__":
         np.deg2rad(90-66.5)
     )
 
-    files = [f"test1photos\\trial1capture{i:03d}.png" for i in range(8)]
+    files = [f"Development\\Mesh Generation\\test1photos\\trial1capture{i:03d}.png" for i in range(8)]
 
     test3(files, config, False)
         
