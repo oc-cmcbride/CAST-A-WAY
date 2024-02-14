@@ -33,13 +33,13 @@ WIDTH = 1280
 HEIGHT = 720
 H_FOV = 55
 D_LASER = 3.125
-THETA_LASER = 55
+THETA_LASER = 12.5
 PHI_LASER = 90-66.5
 BRIGHT_THRESH = 200
 
 # Model generation parameters
 #               X, Y, Z
-POINT_OFFSET = [0.1, 0.1, 0]
+POINT_OFFSET = [1, 0, 0]
 WRITE_MESH_TO_FILE = False
 MESH_FILE_NAME = "mesh.stl"
 
@@ -109,6 +109,9 @@ def main():
     try:
         pointCloud = o3d.geometry.PointCloud()
         pointCloud.points = o3d.utility.Vector3dVector(points3d)
+        # Remove outliers
+        # pointCloud, _ = pointCloud.remove_statistical_outlier(nb_neighbors=20, std_ratio=3.0)
+        # pointCloud, _ = pointCloud.remove_radius_outlier(nb_points=10, radius=2)
     except Exception as e:
         print(f"Error making point cloud: {e}")
         badMesh = True
@@ -123,13 +126,29 @@ def main():
 
     # Create mesh
     try:
+        '''
         mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_poisson(
-            pointCloud,
+            pcd=pointCloud,
             depth=9,
             width=0,
             scale=1,
             linear_fit=True
         )[0]
+        
+        '''
+        mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_ball_pivoting(
+            pcd=pointCloud,
+            radii=o3d.utility.DoubleVector([1, 1.25, 1.5, 2])
+        )
+        
+        '''
+        mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_alpha_shape(
+            pcd=pointCloud,
+            alpha=1.1
+        )
+        '''
+
+        # Required for rendered shading
         mesh = o3d.geometry.TriangleMesh.compute_triangle_normals(mesh)
     except Exception as e:
         print(f"Error creating mesh: {e}")
