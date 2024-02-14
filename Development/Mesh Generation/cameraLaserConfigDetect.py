@@ -33,8 +33,9 @@ from imageTools import *
 CONSTANTS
 '''
 UNITS = "in"    # Distance units used 
-DIST_1 = 6      # Image 1 distance 
-DIST_2 = 8      # Image 2 distance
+DIST_1 = 6.1189      # Image 1 distance 
+DIST_2 = 8.0089      # Image 2 distance
+HFOV = 5          # Horizontal FOV of the camera
 
 '''
 estimatePhiLaser()
@@ -85,8 +86,8 @@ def estimateConfiguration(
    img2points = detectLine(image2)
 
    # Extract x-coordinates of center points
-   x1 = img1points[image1.shape[1] // 2]
-   x2 = img2points[image2.shape[1] // 2]
+   x1 = img1points[image1.shape[1] // 2][0]
+   x2 = img2points[image2.shape[1] // 2][0]
 
    # Create coefficient matrices
    a = np.array([
@@ -115,8 +116,10 @@ MAIN
 '''
 def main():
    # Initialization
-   picsRemaining = 2
+   # picsRemaining = 2
+   picsRemaining = 0
 
+   '''
    # Set up video capture 
    cap = setupVideoCapture(verbose=True)
    
@@ -136,19 +139,26 @@ def main():
          # Save current frame
          if picsRemaining == 2:
             image1 = frame.copy()
+            cv2.imwrite("configDetectImg1.png", image1)
             print("Image 1 captured!")
          elif picsRemaining == 1:
             image2 = frame.copy()
+            cv2.imwrite("configDetectImg2.png", image2)
             print("Image 2 captured!")
          picsRemaining -= 1
       elif (key & 0xFF) == ord('q'):
          # Quit
          break
    # end while picsRemaining > 0
+   '''
+
+   # Read in images
+   image1 = cv2.imread("configDetectImg1.png")
+   image2 = cv2.imread("configDetectImg2.png")
    
    # Process images (if both were captured)
    if picsRemaining == 0:
-      config = estimateConfiguration(image1, DIST_1, image2, DIST_2)
+      config = estimateConfiguration(image1, DIST_1, image2, DIST_2, np.deg2rad(HFOV))
       print(config)
    else:
       print("ERROR: Not enough pictures were captured.")
