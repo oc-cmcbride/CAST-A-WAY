@@ -1,4 +1,4 @@
-'''
+"""
 imageTools.py
 
 Colin McBride, adapted from code by Morgan Demuth and Noah Doner
@@ -6,13 +6,13 @@ Jan 24, 2024
 Systems Engineering Design
 Team CAST-A-WAY
 
-This program provides various functions and tools used to aid in 
-image capturing and processing. A summary of each tool can be 
-found above its definition. 
+This program provides various functions and tools used to aid in
+image capturing and processing. A summary of each tool can be
+found above its definition.
 
-The tools available in this file are: 
-- 
-'''
+The tools available in this file are:
+-
+"""
 from dataclasses import dataclass
 import cv2
 import numpy as np
@@ -33,11 +33,12 @@ class CameraLaserConfig:
     phiLaser: float     # Angle of the laser around the 3D Y axis
 # end class CameraLaserConfig
 
-'''
+
+"""
 setupVideoCapture()
 Sets up a video capture object using the specified video device and 
 returns the capture object. 
-'''
+"""
 def setupVideoCapture(devIndex:int=1, width:int=1280, height:int=720, verbose=False):
     # Get video capture object
     if verbose:

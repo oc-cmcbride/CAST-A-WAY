@@ -4,7 +4,7 @@ from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QFrame, QHBoxLayout, QVBoxLayout, \
     QLabel, QLineEdit, QFormLayout, QPushButton
 from qtpy import QtCore
-from popup_GUI import loadPopUpScreen
+from popupGUI import loadPopUpScreen
 
 
 class homeScreen(QFrame):
