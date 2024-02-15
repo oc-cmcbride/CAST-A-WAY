@@ -33,13 +33,13 @@ WIDTH = 1280
 HEIGHT = 720
 H_FOV = 55
 D_LASER = 3.125
-THETA_LASER = 55
+THETA_LASER = 12.5
 PHI_LASER = 90-66.5
 BRIGHT_THRESH = 200
 
 # Model generation parameters
 #               X, Y, Z
-POINT_OFFSET = [0.1, 0.1, 0]
+POINT_OFFSET = [1, 0, 0]
 WRITE_MESH_TO_FILE = True
 MESH_FILE_NAME = "mesh.stl"
 

@@ -1,47 +1,45 @@
 import sys
+import numpy as np
+from PyQt5.QtWidgets import QApplication
+from pyqtgraph.opengl import GLViewWidget, MeshData, GLMeshItem, GLScatterPlotItem
+from stl import mesh
 
-from PyQt5.QtGui import QVector3D
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout
-from PyQt5.Qt3DExtras import Qt3DWindow
-from PyQt5.Qt3DCore import QEntity
-from PyQt5.Qt3DRender import QMesh
-from PyQt5.QtCore import QUrl
+def center_mesh(vertices):
+    centroid = np.mean(vertices, axis=0)
+    return vertices - centroid
 
-class MainWindow(QWidget):
-    def __init__(self):
+def get_bottom_center(mesh_data):
+    min_y = np.min(mesh_data.vertexes()[:, 1])
+    bottom_vertices = mesh_data.vertexes()[np.isclose(mesh_data.vertexes()[:, 1], min_y)]
+    return np.mean(bottom_vertices, axis=0)
+
+class CustomGLViewWidget(GLViewWidget):
+    def __init__(self, stl_file):
         super().__init__()
-        self.setWindowTitle("STL Viewer")
-        self.setGeometry(100, 100, 800, 600)
 
-        layout = QVBoxLayout()
-        self.setLayout(layout)
+        stl_mesh = mesh.Mesh.from_file(stl_file)
 
-        # Create the Qt3D window
-        self.view = Qt3DWindow()
-        self.container = QWidget.createWindowContainer(self.view)
-        layout.addWidget(self.container)
+        points = stl_mesh.points.reshape(-1, 3)
+        centered_points = center_mesh(points)
+        faces = np.arange(centered_points.shape[0]).reshape(-1, 3)
 
-        # Root entity
-        self.rootEntity = QEntity()
-        self.view.setRootEntity(self.rootEntity)
+        mesh_data = MeshData(vertexes=centered_points, faces=faces)
 
-        # Camera
-        self.camera = self.view.camera()
-        self.camera.lens().setPerspectiveProjection(45.0, 16.0/9.0, 0.1, 1000.0)
-        self.camera.setPosition(QVector3D(0, 0, 40))
-        self.camera.setViewCenter(QVector3D(0, 0, 0))
+        # Set color of the mesh to black and enable drawing faces
+        self.mesh = GLMeshItem(meshdata=mesh_data, color=(0, 0, 0, 1), smooth=True, drawFaces=True, drawEdges=True)
+        self.addItem(self.mesh)
 
-        # Load and display the STL file
-        self.loadSTLFile("cube.stl")
+        # Find center of the bottom face
+        bottom_center = get_bottom_center(mesh_data)
 
-    def loadSTLFile(self, filename):
-        meshEntity = QEntity(self.rootEntity)
-        mesh = QMesh()
-        mesh.setSource(QUrl.fromLocalFile(filename))
-        meshEntity.addComponent(mesh)
+        # Create a dot at the center of the bottom face
+        self.dot = GLScatterPlotItem(pos=np.array([bottom_center]), size=10, color=(0, 255, 0, 255))  # RGBA: green
+        self.addItem(self.dot)
 
-if __name__ == '__main__':
+        self.opts['distance'] = 50
+        self.show()
+
+if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = MainWindow()
-    window.show()
+    view = CustomGLViewWidget('cube.stl')
     sys.exit(app.exec_())
