@@ -33,9 +33,19 @@ from imageTools import *
 CONSTANTS
 '''
 UNITS = "in"    # Distance units used 
-DIST_1 = 6.1189      # Image 1 distance 
-DIST_2 = 8.0089      # Image 2 distance
-HFOV = 5          # Horizontal FOV of the camera
+# DIST_1 = 6.1189      # Image 1 distance 
+# DIST_2 = 8.0089      # Image 2 distance
+DISTANCES = [
+   4.2289,
+   5.3629,
+   6.4969,
+   7.6309,
+   8.7649,
+   9.8989,
+   11.0329,
+   12.1669
+]
+HFOV = 55          # Horizontal FOV of the camera
 
 '''
 estimatePhiLaser()
@@ -51,7 +61,7 @@ def estimatePhiLaser(points, inDeg:bool=False):
    m, b = np.polyfit(transPoints[0], transPoints[1], 1)
 
    # Calculate angle of laser from best fit line 
-   angle = 90 - np.arctan(m)
+   angle = (np.pi / 2) - np.arctan(m)
    if inDeg:
       angle = np.rad2deg(angle)
    
@@ -82,12 +92,12 @@ def estimateConfiguration(
    )
 
    # Get laser points from images
-   img1points = detectLine(image1)
-   img2points = detectLine(image2)
+   img1points = detectLine(image1, 250)
+   img2points = detectLine(image2, 250)
 
    # Extract x-coordinates of center points
-   x1 = img1points[image1.shape[1] // 2][0]
-   x2 = img2points[image2.shape[1] // 2][0]
+   x1 = img1points[config.ymax // 2][0]
+   x2 = img2points[config.ymax // 2][0]
 
    # Create coefficient matrices
    a = np.array([
@@ -101,8 +111,8 @@ def estimateConfiguration(
 
    # Solve for dLaser and thetaLaser
    result = np.linalg.solve(a, b)
-   config.dLaser = result[0]
-   config.thetaLaser = np.arctan(result[1])
+   config.dLaser = result[0][0]
+   config.thetaLaser = np.arctan(result[1][0])
 
    # Average phiLaser of both images
    config.phiLaser = (estimatePhiLaser(img1points) + estimatePhiLaser(img2points)) / 2
@@ -153,13 +163,17 @@ def main():
    '''
 
    # Read in images
-   image1 = cv2.imread("configDetectImg1.png")
-   image2 = cv2.imread("configDetectImg2.png")
+   # image1 = cv2.imread("configDetectImg1.png")
+   # image2 = cv2.imread("configDetectImg2.png")
+   image1 = cv2.imread("Development\\Mesh Generation\\test1photos\\trial1capture003.png")
+   image2 = cv2.imread("Development\\Mesh Generation\\test1photos\\trial1capture004.png")
    
    # Process images (if both were captured)
    if picsRemaining == 0:
-      config = estimateConfiguration(image1, DIST_1, image2, DIST_2, np.deg2rad(HFOV))
-      print(config)
+      config = estimateConfiguration(image1, DISTANCES[3], image2, DISTANCES[4], np.deg2rad(HFOV))
+      print(f"dLaser: {config.dLaser} {UNITS}")
+      print(f"thetaLaser: {np.rad2deg(config.thetaLaser)} deg")
+      print(f"phiLaser: {np.rad2deg(config.phiLaser)} deg")
    else:
       print("ERROR: Not enough pictures were captured.")
     
