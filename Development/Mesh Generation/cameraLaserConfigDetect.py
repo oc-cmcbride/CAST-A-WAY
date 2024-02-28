@@ -1,28 +1,29 @@
 '''
 cameraLaserConfigDetect.py
 Colin McBride
-Feb 12, 2024
+Feb 28, 2024
 Systems Engineering Design
 Team CAST-A-WAY
 
-This program detects the current camera/laser configuration by taking two images 
-at set distances. This procedure assumes the distances in each image are already 
-within the nominal operating range of the current configuration. This is 
-intended as more of a fine-tuning program for a configuration that has already 
-been approximated. 
+This program detects the current camera/laser configuration by taking N number 
+of  images at set distances. This procedure assumes the distances in each image 
+are already within the nominal operating range of the current configuration. 
+This is intended as more of a fine-tuning program for a configuration that has 
+already been approximated. 
 
 USE INSTRUCTIONS
-1. Mark 2 known distances away from a flat surface like a wall, floor, or desk. 
+1. Mark N known distances away from a flat surface like a wall, floor, or desk. 
    Enter the distances into the constants at the beginning of the code. 
   a. Ideally you will already have an idea of the operating range of the 
      current configuration. Set the distances within that range. 
 2. Set the camera/laser setup at the first distance marker and start the 
    program. Look at the video feed to ensure the camera is facing the correct 
    direction, then press space to take a photo. 
-3. Move the camera/laser setup to the second distance marker. Look at the video 
+3. Move the camera/laser setup to the next distance marker. Look at the video 
    feed to ensure the camera is facing the correct direction, then press space 
    to take a photo. 
-4. If performed correctly, the program should output to the terminal the 
+4. Repeat step 3 for all N distances. 
+5. If performed correctly, the program should output to the terminal the 
    detected camera/laser configuration parameters. 
 '''
 import cv2
@@ -37,18 +38,6 @@ DISTANCES = [     # Array with distance values. The length of this array determi
    6.1189,
    8.0089
 ]
-'''
-distances = [
-      4.2289,
-      5.3629,
-      6.4969,
-      7.6309,
-      8.7649,
-      9.8989,
-      11.0329,
-      12.1669
-   ]
-'''
 HFOV = 55          # Horizontal FOV of the camera
 
 '''
