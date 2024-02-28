@@ -29,7 +29,7 @@ class MainWindow(QMainWindow):
         main_layout = QVBoxLayout()
         main_layout.addWidget(self.stacked_widget)
         self.central_widget.setLayout(main_layout)
-        self.finish_click()
+        self.home_click()
 
     def add_login_frame(self):
         self.stacked_widget.addWidget(self.login)

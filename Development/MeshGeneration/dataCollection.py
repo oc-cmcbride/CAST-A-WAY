@@ -15,8 +15,6 @@ change the direction the points are stacked:
   Y: Forward(+)/Backward(-) from the camera's perspective
   Z: Up(+)/Down(-) from the camera's perspective
 """
-import numpy as np
-import open3d as o3d
 from imageTools import *
 
 """
@@ -45,7 +43,7 @@ MESH_FILE_NAME = "mesh.stl"
 class DataCollection:
     def __init__(self):
         # Set up camera/laser config data
-        clConfig = CameraLaserConfig(
+        self.clConfig = CameraLaserConfig(
             WIDTH,
             HEIGHT,
             np.deg2rad(H_FOV),
@@ -53,12 +51,10 @@ class DataCollection:
             np.deg2rad(THETA_LASER),
             np.deg2rad(PHI_LASER)
         )
-
+        self.points3d = []
         # Initialize 3D points list
         # This list contains 3-element tuples
-        points3d = []
     def get_images(self):
-
 
     def get_image_points(self):
         # Read in frames from image files
@@ -71,10 +67,10 @@ class DataCollection:
 
         # Read in points from frames
         print("Processing with the following parameters:")
-        print(f"Resolution: {clConfig.xmax} x {clConfig.ymax}")
-        print(f"Camera horizontal FOV: {clConfig.thetaFov:.4f} rad")
-        print(f"Laser distance: {clConfig.dlaser}")
-        print(f"Laser rotation: Z-axis: {clConfig.thetaLaser:.4f} rad, Y-axis: {clConfig.phiLaser:.4f} rad")
+        print(f"Resolution: {self.clConfig.xmax} x {self.clConfig.ymax}")
+        print(f"Camera horizontal FOV: {self.clConfig.thetaFov:.4f} rad")
+        print(f"Laser distance: {self.clConfig.dlaser}")
+        print(f"Laser rotation: Z-axis: {self.clConfig.thetaLaser:.4f} rad, Y-axis: {self.clConfig.phiLaser:.4f} rad")
         for frame in frames:
             # Calculate new points
             points2d = detectLine(frame, BRIGHT_THRESH)
@@ -84,8 +80,8 @@ class DataCollection:
 
             # Convert 2d image points to 3d points
             for [x, y] in points2d:
-                depth = calculateImagePointDepth(x, y, clConfig)
-                newPoint = imageToCameraCoords(x, y, depth, clConfig)
+                depth = calculateImagePointDepth(x, y, self.clConfig)
+                newPoint = imageToCameraCoords(x, y, depth, self.clConfig)
 
                 # Apply offset
                 newPoint[0] += POINT_OFFSET[0] * frameCount
@@ -93,9 +89,11 @@ class DataCollection:
                 newPoint[2] += POINT_OFFSET[2] * frameCount
 
                 # Add to point list
-                points3d.append(newPoint)
+                self.points3d.append(newPoint)
             # end for [x,y] in points2d
 
             # Increment frame count
             frameCount += 1
         # end for frame in frames
+
+

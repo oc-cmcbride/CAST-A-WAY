@@ -12,7 +12,7 @@ class finishedScreen(QFrame):
         self.window = window
         self.setGeometry(100, 100, 1600, 1200)
 
-        self.mesh = CustomGLViewWidget('cube.stl')
+        self.mesh = CustomGLViewWidget('mesh.stl')
         self.get_mesh()
         self.mesh.setFixedSize(1600, 1000)
         self.save_button = QPushButton('Save File')
@@ -64,13 +64,13 @@ class CustomGLViewWidget(GLViewWidget):
         self.mesh = GLMeshItem(meshdata=self.mesh_data, color=(0, 0, 0, 1), drawFaces=False, drawEdges=True)
         self.addItem(self.mesh)
 
-        front_center = self.get_front_center()
+        #front_center = self.get_front_center()
 
         # Create a dot at the center of the front face
-        dot_mesh_data = MeshData.sphere(rows=10, cols=10, radius=0.1)
+        """dot_mesh_data = MeshData.sphere(rows=10, cols=10, radius=0.1)
         self.dot = GLMeshItem(meshdata=dot_mesh_data, color=(0, 255, 0, 255))  # RGBA: green
         self.dot.translate(front_center[0], front_center[1], front_center[2])  # Translate to front center
-        self.addItem(self.dot)
+        self.addItem(self.dot)"""
 
         self.opts['distance'] = 50
         self.show()
@@ -79,7 +79,7 @@ class CustomGLViewWidget(GLViewWidget):
         centroid = np.mean(self.points, axis=0)
         return self.points - centroid
 
-    def get_front_center(self):
+    """def get_front_center(self):
         front_face_index = np.argmin(self.mesh_data.vertexes()[:, 2])
         front_face_vertices = self.mesh_data.faces()[front_face_index]
 
@@ -89,4 +89,4 @@ class CustomGLViewWidget(GLViewWidget):
         max_point = np.max(front_face_points, axis=0)
         front_center = (min_point + max_point) / 2
 
-        return front_center
+        return front_center"""

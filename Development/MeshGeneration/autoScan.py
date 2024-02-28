@@ -1,17 +1,19 @@
 """
 manualScan.py
 """
+import open3d as o3d
+from imageTools import *
 
 
 class MeshCreate:
     def __init__(self):
         self.badMesh = False
+        self.points3d = []
+        self.pointCloud = o3d.geometry.PointCloud()
 
-# run program
     def create_point_cloud(self):
         try:
-            self.pointCloud = o3d.geometry.PointCloud()
-            self.pointCloud.points = o3d.utility.Vector3dVector(points3d)
+            self.pointCloud.points = o3d.utility.Vector3dVector(self.points3d)
         except Exception as e:
             print(f"Error making point cloud: {e}")
             self.badMesh = True

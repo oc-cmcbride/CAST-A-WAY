@@ -3,14 +3,12 @@ import os
 from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QApplication
 from mainGUI import MainWindow
-from MeshGeneration.autoScan import MeshCreate
 
 
 class FinalProgram:
     def __init__(self):
         self.app = QApplication(sys.argv)
         self.window = MainWindow(self)
-        self.mesh_create = MeshCreate()
 
     def run(self):
         self.window.show()
@@ -18,7 +16,6 @@ class FinalProgram:
 
     def start(self):
         self.calibrate()
-        self.mesh_create.run()
         print('Started')
 
     def calibrate(self):
@@ -27,8 +24,7 @@ class FinalProgram:
         timer.start(10000)
 
     def get_file(self):
-        file = self.mesh_created.get_stl()
-        return file
+        return 'mesh'
 
 
 # call reset
