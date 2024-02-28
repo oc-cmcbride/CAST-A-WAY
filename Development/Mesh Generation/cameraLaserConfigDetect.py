@@ -33,17 +33,11 @@ from imageTools import *
 CONSTANTS
 '''
 UNITS = "in"    # Distance units used 
-# DIST_1 = 6.1189      # Image 1 distance 
-# DIST_2 = 8.0089      # Image 2 distance
-DISTANCES = [
-   4.2289,
-   5.3629,
-   6.4969,
-   7.6309,
-   8.7649,
-   9.8989,
-   11.0329,
-   12.1669
+DIST_1 = 6.1189      # Image 1 distance 
+DIST_2 = 8.0089      # Image 2 distance
+DISTANCES = [     # Array with distance values. The length of this array determines how many pictures will be taken. 
+   6.1189,
+   8.0089
 ]
 HFOV = 55          # Horizontal FOV of the camera
 
@@ -102,6 +96,12 @@ def estimateConfiguration(
    dLaserPoints = []
    thetaLaserPoints = []
 
+   # Make sure img1points has the fewest number of points
+   if len(img2points) > len(img1points):
+      temp = img1points
+      img1points = img2points
+      img2points = temp
+
    # Loop through all points in the images
    for (x1, y1) in img1points:
       # Extract points
@@ -136,11 +136,10 @@ def estimateConfiguration(
 MAIN
 '''
 def main():
-   # Initialization
-   # picsRemaining = 2
-   picsRemaining = 0
-
    '''
+   # Initialization
+   picsRemaining = 2
+
    # Set up video capture 
    cap = setupVideoCapture(verbose=True)
    
@@ -171,22 +170,52 @@ def main():
          # Quit
          break
    # end while picsRemaining > 0
-   '''
-
-   # Read in images
-   # image1 = cv2.imread("configDetectImg1.png")
-   # image2 = cv2.imread("configDetectImg2.png")
-   image1 = cv2.imread("Development\\Mesh Generation\\test1photos\\trial1capture005.png")
-   image2 = cv2.imread("Development\\Mesh Generation\\test1photos\\trial1capture006.png")
    
    # Process images (if both were captured)
    if picsRemaining == 0:
-      config = estimateConfiguration(image1, DISTANCES[5], image2, DISTANCES[6], np.deg2rad(HFOV))
+      config = estimateConfiguration(image1, DIST_1, image2, DIST_2, np.deg2rad(HFOV))
       print(f"dLaser: {config.dLaser} {UNITS}")
       print(f"thetaLaser: {np.rad2deg(config.thetaLaser)} deg")
       print(f"phiLaser: {np.rad2deg(config.phiLaser)} deg")
+      print(f"Total configuration: {config}")
    else:
       print("ERROR: Not enough pictures were captured.")
+   '''
+
+   # Initialization
+   numImages = 8
+   distances = [
+      4.2289,
+      5.3629,
+      6.4969,
+      7.6309,
+      8.7649,
+      9.8989,
+      11.0329,
+      12.1669
+   ]
+
+   # Collect images
+   images = []
+   for i in range(numImages):
+      images.append(cv2.imread(f"Development\\Mesh Generation\\test1photos\\trial1capture{i:03d}.png"))
+   
+   # Perform all possible permutations
+   dLaserPoints = []
+   thetaLaserPoints = []
+   phiLaserPoints = []
+   for i in range(numImages):
+      for j in range(i + 1, numImages):
+         config = estimateConfiguration(images[i], distances[i], images[j], distances[j], np.deg2rad(HFOV))
+         dLaserPoints.append(config.dLaser)
+         thetaLaserPoints.append(config.thetaLaser)
+         phiLaserPoints.append(config.phiLaser)
+   
+   # Average results from all 
+   dLaser = np.average(dLaserPoints)
+   thetaLaser = np.average(thetaLaserPoints)
+   phiLaser = np.average(phiLaserPoints)
+   print(f"dLaser: {dLaser} {UNITS}, thetaLaser: {np.rad2deg(thetaLaser)} deg, phiLaser: {np.rad2deg(phiLaser)} deg")
     
 # end main
 
