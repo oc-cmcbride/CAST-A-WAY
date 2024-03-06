@@ -12,7 +12,7 @@ and saves them to the working directory.
 import cv2
 
 # Constants
-IMG_NAME = "capture"    # The name to use for captured image. Name foramt is [IMG_NAME][Image_Index].png
+IMG_NAME = "capture"    # The name to use for captured image. Name format is [IMG_NAME][Image_Index].png
 WIDTH = 1280
 HEIGHT = 720
 

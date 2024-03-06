@@ -1,8 +1,15 @@
 """
-manualScan.py
+Morgan Demuth adapted from Colin McBride's manualScan.py
+Feb 28, 2024
+Systems Engineering Design
+Team CAST-A-WAY
+
+This program uses a set of 2D points and converts them into 3D points and a mesh.
 """
+
 import open3d as o3d
-from imageTools import *
+from MeshGeneration.dataCollection import DataCollection
+from MeshGeneration.imageTools import *
 
 
 class MeshCreate:
@@ -10,6 +17,12 @@ class MeshCreate:
         self.badMesh = False
         self.points3d = []
         self.pointCloud = o3d.geometry.PointCloud()
+        self.mesh_name = 'lalala'
+
+    def start(self):
+        data_collection = DataCollection()
+        self.points3d = data_collection.get_data()
+        self.create_point_cloud()
 
     def create_point_cloud(self):
         try:
@@ -54,4 +67,4 @@ class MeshCreate:
             )
 
     def write_file(self):
-        o3d.io.write_triangle_mesh(MESH_FILE_NAME, self.mesh)
+        o3d.io.write_triangle_mesh(self.mesh_name, self.mesh)
