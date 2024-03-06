@@ -2,5 +2,6 @@
     "sketch": "Development\\Motor Control\\motorController\\motorController.ino",
     "configuration": "cpu=atmega2560",
     "board": "arduino:avr:mega",
-    "port": "COM3"
+    "port": "COM3",
+    "programmer": "arduino:arduinoisp"
 }
