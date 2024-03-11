@@ -1,29 +1,30 @@
 #include <HardwareSerial.h>
 
 // Socket rotation motor pins
-#define rotDirPin 2
-#define rotStepPin 3
+#define ROT_DIR_PIN 2
+#define ROT_STEP_PIN 3
 // Camera/Laser translation motor pins
-#define transDirPin 4
-#define transStepPin 5
+#define TRANS_DIR_PIN 4
+#define TRANS_STEP_PIN 5
 
 // Step delay (in microseconds)
-#define STEP_DELAY_US 500
+#define STEP_DELAY_US 1000
+
 
 void setup() {
   // Initialize serial connection
   Serial.begin(9600);
 
   // Declare pins as output 
-  pinMode(rotDirPin, OUTPUT);
-  pinMode(rotStepPin, OUTPUT);
-  pinMode(transDirPin, OUTPUT);
-  pinMode(transStepPin, OUTPUT);
+  pinMode(ROT_DIR_PIN, OUTPUT);
+  pinMode(ROT_STEP_PIN, OUTPUT);
+  pinMode(TRANS_DIR_PIN, OUTPUT);
+  pinMode(TRANS_STEP_PIN, OUTPUT);
 
   // Set the initial spin directions 
   // HIGH = CW/CCW??, LOW = CW/CCW???
-  digitalWrite(rotDirPin, HIGH);
-  digitalWrite(transDirPin, HIGH);
+  digitalWrite(ROT_DIR_PIN, HIGH);
+  digitalWrite(TRANS_DIR_PIN, HIGH);
 }
 
 void loop() {
@@ -33,15 +34,33 @@ void loop() {
     char command = Serial.read();
 
     // Perform action based on character 
-    if (command == 't') {
-      // Step translation motor 
-      step(transStepPin);
-    }
-    else if (command == 'r') {
-      // Step rotation motor 
-      step(rotStepPin);
+    switch (command) {
+      // Step translation motor
+      case 't':
+        digitalWrite(TRANS_DIR_PIN, HIGH);
+        step(TRANS_STEP_PIN);
+        break;
+      case 'T':
+        digitalWrite(TRANS_DIR_PIN, LOW);
+        step(TRANS_STEP_PIN);
+        break;
+      // Step rotation motor
+      case 'r':
+        digitalWrite(ROT_DIR_PIN, HIGH);
+        step(ROT_STEP_PIN);
+        break;
+      case 'R':
+        digitalWrite(ROT_DIR_PIN, LOW);
+        step(ROT_STEP_PIN);
+        break;
+      default:
+        break;
     }
   }
+
+  // Check sensors to write data back to the computer
+  // TODO: Write sensor code 
+  // Use Serial.write() to write data back to the computer 
 }
 
 void step(int stepPin) {
