@@ -1,4 +1,4 @@
-"""
+'''
 imageTools.py
 
 Colin McBride, adapted from code by Morgan Demuth and Noah Doner
@@ -6,13 +6,13 @@ Jan 24, 2024
 Systems Engineering Design
 Team CAST-A-WAY
 
-This program provides various functions and tools used to aid in
-image capturing and processing. A summary of each tool can be
-found above its definition.
+This program provides various functions and tools used to aid in 
+image capturing and processing. A summary of each tool can be 
+found above its definition. 
 
-The tools available in this file are:
--
-"""
+The tools available in this file are: 
+- 
+'''
 from dataclasses import dataclass
 import cv2
 import numpy as np
@@ -33,12 +33,11 @@ class CameraLaserConfig:
     phiLaser: float     # Angle of the laser around the 3D Y axis
 # end class CameraLaserConfig
 
-
-"""
+'''
 setupVideoCapture()
 Sets up a video capture object using the specified video device and 
 returns the capture object. 
-"""
+'''
 def setupVideoCapture(devIndex:int=1, width:int=1280, height:int=720, verbose=False):
     # Get video capture object
     if verbose:
@@ -63,8 +62,6 @@ def setupVideoCapture(devIndex:int=1, width:int=1280, height:int=720, verbose=Fa
 detectLine()
 Detects a single red laser line in the given image frame. 
 '''
-
-
 def detectLine(image:np.ndarray, threshold_value:int=200):
     # Extract the red channel
     red_channel = image[:, :, 2]
@@ -94,25 +91,20 @@ def detectLine(image:np.ndarray, threshold_value:int=200):
     return center_points
 # end detectLine()
 
-"""
+'''
 calculateImagePointDepth()
 Takes in an image point and camera configuration data and outputs the 
 estimated depth value. 
-"""
-
-
+'''
 def calculateImagePointDepth(x:float, y:float, clc:CameraLaserConfig) -> float:
     return (clc.dlaser) / (np.tan(clc.thetaLaser) + np.tan(clc.thetaFov * ((x - (y - 0.5*clc.ymax)*np.tan(clc.phiLaser)) / (clc.xmax) - 0.5)))
 # end calculateImagePointDepth()
 
-
-"""
+'''
 imageToCameraCoords()
 Takes a set of image coordinate parameters (x, y, width, height, hfov) and 
 depth and converts them to a 3D coordinate (x, y, z) relative to the camera. 
-"""
-
-
+'''
 def imageToCameraCoords(x:float, y:float, depth:float, clc:CameraLaserConfig):
     # Calculate vertical FOV
     hfov = clc.thetaFov
@@ -168,8 +160,6 @@ If a file with the given name already exists, the contents will be overwritten.
 points: List of 3D points
 dest: Destination file name. Should include the ".xyz" extension. 
 '''
-
-
 def writePointsToFile(points, dest:str):
     with open(dest, "w") as file:
         for point in points:
