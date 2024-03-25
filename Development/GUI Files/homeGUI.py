@@ -1,16 +1,16 @@
-import sys
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QFrame, QHBoxLayout, QVBoxLayout, \
-    QLabel, QLineEdit, QFormLayout, QPushButton
-from qtpy import QtCore
+    QLabel, QLineEdit, QPushButton
 from popupGUI import loadPopUpScreen
+from MeshGeneration.capture import Driver
 
 
 class homeScreen(QFrame):
 
     def __init__(self, window):
         super().__init__()
+        self.timer = QTimer()
         self.setGeometry(100, 100, 1600, 1200)
         self.window = window
         self.popup = loadPopUpScreen()
@@ -69,13 +69,22 @@ class homeScreen(QFrame):
         layout.addLayout(right)
         self.setLayout(layout)
 
+    def close_popup(self):
+        reset_done = False
+        reset_done = Driver().reset()
+        if reset_done:  # Replace condition_met with your actual condition
+            self.popup.close()
+            self.timer.stop()
+            self.window.start_clicked()
+            self.start_button.setVisible(False)
+            self.quit_button.setVisible(True)
+            self.restart_button.setVisible(True)
+            self.finish_button.setVisible(True)
+
     def start(self):
         self.popup.showPopup()
-        self.window.start_clicked()
-        self.start_button.setVisible(False)
-        self.quit_button.setVisible(True)
-        self.restart_button.setVisible(True)
-        self.finish_button.setVisible(True)
+        self.timer.timeout.connect(self.close_popup)
+        self.timer.start(7000)
 
     def quit(self):
         self.start_button.setVisible(True)
@@ -84,8 +93,12 @@ class homeScreen(QFrame):
         self.finish_button.setVisible(False)
 
     def restart(self):
-        self.window.start_clicked()
-        self.popup.exec_()
-        self.start_button.setVisible(False)
-        self.quit_button.setVisible(True)
-        self.restart_button.setVisible(True)
+        self.popup.showPopup()
+        self.timer.timeout.connect(self.close_popup)
+        self.timer.start(7000)
+
+    def reset(self):
+        self.start_button.setVisible(True)
+        self.quit_button.setVisible(False)
+        self.restart_button.setVisible(False)
+        self.finish_button.setVisible(False)

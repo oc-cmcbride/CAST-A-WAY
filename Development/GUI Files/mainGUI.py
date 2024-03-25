@@ -1,3 +1,11 @@
+"""
+Morgan Demuth
+March 25, 2024
+Systems Engineering Design
+Team CAST-A-WAY
+
+This program is the main program GUI that runs a Qwindow that switches between widgets
+"""
 from PyQt5.QtWidgets import QWidget, QMainWindow, QStackedWidget, QVBoxLayout
 from loginGUI import loginScreen
 from homeGUI import homeScreen
@@ -46,12 +54,14 @@ class MainWindow(QMainWindow):
 
     def home_click(self):
         self.stacked_widget.setCurrentIndex(1)
+        self.home.reset()
 
     def finish_click(self):
         self.stacked_widget.setCurrentIndex(2)
+        self.finished.reset()
 
     def start_clicked(self):
-        self.main_prog.start()
+        self.main_program.start()
 
     def get_file_name(self):
         file_name = self.main_program.get_file()
