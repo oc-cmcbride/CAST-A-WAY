@@ -12,7 +12,7 @@
 
 // Step delay (in microseconds)
 // #define STEP_DELAY_US 1000
-#define STEP_DELAY_US 10
+#define STEP_DELAY_US 500
 
 // Continuous action identifier
 char continuousAction = ' ';
@@ -62,15 +62,17 @@ void loop() {
         break;
       // Set and clear continuous actions
       case 'c':
-        Serial.write("Received continuous request...\n");
+        // Serial.write("Received continuous request...\n");
         continuousAction = 'c';
         while (continuousAction == 'c') {
           while (Serial.available() == 0);
           continuousAction = Serial.read();
         };
+        /*
         Serial.write("Continuous request set to: ");
         Serial.write(continuousAction);
         Serial.write('\n');
+        */
         break;
       case 'C':
         continuousAction = ' ';
