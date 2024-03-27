@@ -15,7 +15,7 @@
 #define STEP_DELAY_US 10
 
 // Continuous action identifier
-char continuousAction = '';
+char continuousAction = ' ';
 
 
 void setup() {
@@ -65,7 +65,7 @@ void loop() {
         continuousAction = Serial.read();
         break;
       case 'C':
-        continuousAction = '';
+        continuousAction = ' ';
         break;
       default:
         break;
