@@ -62,7 +62,15 @@ void loop() {
         break;
       // Set and clear continuous actions
       case 'c':
-        continuousAction = Serial.read();
+        Serial.write("Received continuous request...\n");
+        continuousAction = 'c';
+        while (continuousAction == 'c') {
+          while (Serial.available() == 0);
+          continuousAction = Serial.read();
+        };
+        Serial.write("Continuous request set to: ");
+        Serial.write(continuousAction);
+        Serial.write('\n');
         break;
       case 'C':
         continuousAction = ' ';
