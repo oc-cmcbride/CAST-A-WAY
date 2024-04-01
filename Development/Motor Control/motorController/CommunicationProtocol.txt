@@ -1,0 +1,15 @@
+Motor Controller Communication Protocol
+Version 2
+
+This file shows the various commands that can be sent to and received from the motor controller. 
+All commands are from the perspective of the computer, so a "Send" command goes from the computer to the Arduino and a receive command goes from Arduino to computer. 
+Motor directions (CW/CCW) are from the perspective of looking at the motor top-down. The top of the motor is the side opposite of where the wires come out. 
+A command is "repeatable" if it can be programmatically repeated by the Arduino using one of the repeating commands. 
+
+Command	        Send/Receive	Repeatable? 	Function 
+r	            Send	        Yes	            Turn rotation motor clockwise
+R	            Send	        Yes	            Turn rotation motor counterclockwise
+t	            Send	        Yes	            Turn translation motor clockiwse 
+T	            Send	        Yes	            Turn translation motor counterclockwise 
+c <Command>	    Send	        No	            Continuously repeats the next command until told to stop. Only one command can be continuously repeated at once. 
+C	            Send	        No	            Stops all continuously repeating commands. 
