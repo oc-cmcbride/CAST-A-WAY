@@ -14,8 +14,19 @@
 // #define STEP_DELAY_US 1000
 #define STEP_DELAY_US 500
 
-// Continuous action identifier
-char continuousAction = ' ';
+// Total number of repeatable actions
+#define NUM_REPEATABLE_ACTIONS 4
+// List of actions that can be repeated 
+const char repeatableActions[] = {'r', 'R', 't', 'T'};
+// Counters for repeated actions (-1 means repeate infinitely)
+int actionCounters[] = {0, 0, 0, 0};
+
+// Indices of actions in the above action arrays
+#define ACTION_r 0
+#define ACTION_R 1
+#define ACTION_t 2
+#define ACTION_T 3
+
 
 
 void setup() {
@@ -41,7 +52,28 @@ void loop() {
     char command = Serial.read();
 
     // Perform action based on character 
-    switch (command) {
+    executeCommand(command);
+  }
+
+  // Perform any repeated actions
+  performRepeatedActions();
+
+  // Check sensors to write data back to the computer
+  // TODO: Write sensor code 
+  // Use Serial.write() to write data back to the computer 
+}
+
+// Step a motor one time 
+void step(int stepPin) {
+  digitalWrite(stepPin, HIGH);
+  delayMicroseconds(STEP_DELAY_US);
+  digitalWrite(stepPin, LOW);
+  delayMicroseconds(STEP_DELAY_US);
+}
+
+// Execute the specified command
+void executeCommand(char command) {
+  switch (command) {
       // Step translation motor
       case 't':
         digitalWrite(TRANS_DIR_PIN, HIGH);
@@ -63,11 +95,17 @@ void loop() {
       // Set and clear continuous actions
       case 'c':
         // Serial.write("Received continuous request...\n");
-        continuousAction = 'c';
-        while (continuousAction == 'c') {
+        command = 'c'; 
+        while (command == 'c') {
           while (Serial.available() == 0);
-          continuousAction = Serial.read();
+          command = Serial.read();
         };
+        for (int i = 0; i < NUM_REPEATABLE_ACTIONS; i++) {
+          if (command == repeatableActions[i]) {
+            makeRepeatedAction(i, -1);
+            break;
+          }
+        }
         /*
         Serial.write("Continuous request set to: ");
         Serial.write(continuousAction);
@@ -75,45 +113,60 @@ void loop() {
         */
         break;
       case 'C':
-        continuousAction = ' ';
+        for (int i = 0; i < NUM_REPEATABLE_ACTIONS; i++) {
+          actionCounters[i] = 0;
+        }
         break;
       default:
+        // Serial.write("Unrecognized command: ");
+        // Serial.write(command);
+        // Serial.write("\n");
         break;
     }
-  }
+}
 
-  // Perform any continuous actions
-  switch (continuousAction) {
-    // Step translation motor
-    case 't':
-      digitalWrite(TRANS_DIR_PIN, HIGH);
-      step(TRANS_STEP_PIN);
+// Make an action repeated
+void makeRepeatedAction(int actionIndex, int reps) {
+  // Verify a motor is not turning in multiple directions
+  // Prioritize most recent repeat request
+  switch (actionIndex) {
+    // Rotational motor
+    case ACTION_r:
+      actionCounters[ACTION_R] = 0;
       break;
-    case 'T':
-      digitalWrite(TRANS_DIR_PIN, LOW);
-      step(TRANS_STEP_PIN);
+    case ACTION_R:
+      actionCounters[ACTION_r] = 0;
       break;
-    // Step rotation motor
-    case 'r':
-      digitalWrite(ROT_DIR_PIN, HIGH);
-      step(ROT_STEP_PIN);
+    // Translational motor
+    case ACTION_t:
+      actionCounters[ACTION_T] = 0;
       break;
-    case 'R':
-      digitalWrite(ROT_DIR_PIN, LOW);
-      step(ROT_STEP_PIN);
+    case ACTION_T: 
+      actionCounters[ACTION_t] = 0;
       break;
     default:
       break;
   }
 
-  // Check sensors to write data back to the computer
-  // TODO: Write sensor code 
-  // Use Serial.write() to write data back to the computer 
+  // Make action repeated 
+  actionCounters[actionIndex] = reps;
 }
 
-void step(int stepPin) {
-  digitalWrite(stepPin, HIGH);
-  delayMicroseconds(STEP_DELAY_US);
-  digitalWrite(stepPin, LOW);
-  delayMicroseconds(STEP_DELAY_US);
+// Perform repeated actions
+void performRepeatedActions() {
+  char action;
+  for (int i = 0; i < NUM_REPEATABLE_ACTIONS; i++) {
+    // Determine if action should be repeated 
+    action = ' ';
+    if (actionCounters[i] > 0) {
+      action = repeatableActions[i];
+      actionCounters[i]--;
+    }
+    else if (actionCounters[i] == -1) {
+      action = repeatableActions[i];
+    }
+
+    // Perform action
+    executeCommand(action);
+  }
 }

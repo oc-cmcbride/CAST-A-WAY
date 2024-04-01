@@ -1,6 +1,6 @@
 {
-    "board": "arduino:avr:mega",
-    "port": "COM3",
+    "board": "arduino:avr:uno",
+    "port": "COM6",
     "sketch": "Development\\Motor Control\\motorController\\motorController.ino",
     "programmer": "arduino:arduinoasisp"
 }
