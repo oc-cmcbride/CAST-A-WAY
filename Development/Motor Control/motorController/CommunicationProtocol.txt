@@ -1,5 +1,5 @@
 Motor Controller Communication Protocol
-Version 2
+Version 3
 
 This file shows the various commands that can be sent to and received from the motor controller. 
 All commands are from the perspective of the computer, so a "Send" command goes from the computer to the Arduino and a receive command goes from Arduino to computer. 
