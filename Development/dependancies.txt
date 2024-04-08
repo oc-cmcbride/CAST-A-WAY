@@ -1,7 +1,7 @@
 pip install open3d 0.17.0
 pip install opencv-python
 pip install matplotlib
-pip install numply-stl
+pip install numpy-stl
 pip install pyopenGL
 pip install pyqtgraph
 pip install pyqt5
