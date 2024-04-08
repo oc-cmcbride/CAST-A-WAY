@@ -209,7 +209,7 @@ class credScreen(QDialog):
             # Iterate through each line in the file
             for line in file:
                 # Check if the current line exactly matches the search credentials
-                if all(word in line for word in target_words):
+                if all(word in line for word in search_master):
                     return True
             return False
 

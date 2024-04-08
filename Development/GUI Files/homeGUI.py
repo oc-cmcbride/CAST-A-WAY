@@ -75,16 +75,21 @@ class homeScreen(QFrame):
         if reset_done:  # Replace condition_met with your actual condition
             self.popup.close()
             self.timer.stop()
-            self.window.start_clicked()
-            self.start_button.setVisible(False)
-            self.quit_button.setVisible(True)
-            self.restart_button.setVisible(True)
-            self.finish_button.setVisible(True)
+            print("ready for scan")
 
-    def start(self):
+    def calibrate(self):
+        print("Calibration Started")
         self.popup.showPopup()
         self.timer.timeout.connect(self.close_popup)
         self.timer.start(7000)
+
+    def start(self):
+        self.start_button.setVisible(False)
+        self.quit_button.setVisible(True)
+        self.restart_button.setVisible(True)
+        self.finish_button.setVisible(True)
+        self.window.main_program.start()
+
 
     def quit(self):
         self.start_button.setVisible(True)
@@ -93,9 +98,8 @@ class homeScreen(QFrame):
         self.finish_button.setVisible(False)
 
     def restart(self):
-        self.popup.showPopup()
-        self.timer.timeout.connect(self.close_popup)
-        self.timer.start(7000)
+        self.calibrate()
+        self.start()
 
     def reset(self):
         self.start_button.setVisible(True)

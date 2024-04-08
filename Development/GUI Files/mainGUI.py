@@ -55,6 +55,7 @@ class MainWindow(QMainWindow):
     def home_click(self):
         self.stacked_widget.setCurrentIndex(1)
         self.home.reset()
+        self.home.calibrate()
 
     def finish_click(self):
         self.stacked_widget.setCurrentIndex(2)
