@@ -1,6 +1,3 @@
-import os
-print(os.getcwd())
-
 import sys
 from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QApplication

@@ -61,10 +61,10 @@ class DataCollection:
         rotate = True
         while scan:
             driver.move_to_start()
-            while rotate:
+            while not driver.rot_sensor:
                 self.get_image()
                 driver.rotate_left()
-                rotate = driver.check_full_circle()
+                driver.check_sensors()
             driver.translate_up()
             scan = driver.check_scan_complete()
         print('get images')
