@@ -9,6 +9,10 @@
 // Camera/Laser translation motor pins
 #define TRANS_DIR_PIN 4
 #define TRANS_STEP_PIN 5
+// Motor position sensors
+#define ROT_SENSOR 11
+#define TRANS_SENSOR_TOP_LIMIT 12
+#define TRANS_SENSOR_BOT_LIMIT 13
 
 // Step delay (in microseconds)
 // #define STEP_DELAY_US 1000
@@ -33,7 +37,12 @@ void setup() {
   // Initialize serial connection
   Serial.begin(BAUD);
 
-  // Declare pins as output 
+  // Declare input pins
+  pinMode(ROT_SENSOR, INPUT);
+  pinMode(TRANS_SENSOR_BOT_LIMIT, INPUT);
+  pinMode(TRANS_SENSOR_TOP_LIMIT, INPUT);
+
+  // Declare output pins
   pinMode(ROT_DIR_PIN, OUTPUT);
   pinMode(ROT_STEP_PIN, OUTPUT);
   pinMode(TRANS_DIR_PIN, OUTPUT);
@@ -59,8 +68,7 @@ void loop() {
   performRepeatedActions();
 
   // Check sensors to write data back to the computer
-  // TODO: Write sensor code 
-  // Use Serial.write() to write data back to the computer 
+  checkSensors();
 }
 
 // Step a motor one time 
@@ -168,5 +176,28 @@ void performRepeatedActions() {
 
     // Perform action
     executeCommand(action);
+  }
+}
+
+void checkSensors() {
+  int readVal;
+  
+  // Check rotation motor sensor
+  readVal = digitalRead(ROT_SENSOR);
+  // Recall that the photointerrupter is set HIGH by default! 
+  if (readVal == LOW && Serial.availableForWrite()) {
+    Serial.write('1');
+  }
+
+
+  // Check translation motor sensors 
+  readVal = digitalRead(TRANS_SENSOR_TOP_LIMIT);
+  if (readVal == HIGH && Serial.availableForWrite()) {
+    Serial.write('2');
+  }
+
+  readVal = digitalRead(TRANS_SENSOR_BOT_LIMIT);
+  if (readVal == HIGH && Serial.availableForWrite()) {
+    Serial.write('3');
   }
 }
