@@ -91,7 +91,7 @@ class DataCollection:
         print("Processing with the following parameters:")
         print(f"Resolution: {self.clConfig.xmax} x {self.clConfig.ymax}")
         print(f"Camera horizontal FOV: {self.clConfig.thetaFov:.4f} rad")
-        print(f"Laser distance: {self.clConfig.dlaser}")
+        print(f"Laser distance: {self.clConfig.dLaser}")
         print(f"Laser rotation: Z-axis: {self.clConfig.thetaLaser:.4f} rad, Y-axis: {self.clConfig.phiLaser:.4f} rad")
         for frame in frames:
             # Calculate new points

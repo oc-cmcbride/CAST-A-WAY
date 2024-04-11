@@ -21,14 +21,15 @@ import matplotlib.pyplot as plt
 
 '''
 CameraLaserConfig
-Contains all important configuration data about the camera/laser setup. 
+Structure that contains all important configuration data about the camera/laser 
+setup. 
 '''
 @dataclass
 class CameraLaserConfig:
     xmax: float         # Image width in pixels 
     ymax: float         # Image height in pixels 
     thetaFov: float     # Horizontal camera field of view in radians 
-    dlaser: float       # Distance between the laser and camera lens
+    dLaser: float       # Distance between the laser and camera lens
     thetaLaser: float   # Angle of the laser around the 3D Z axis
     phiLaser: float     # Angle of the laser around the 3D Y axis
 # end class CameraLaserConfig
@@ -97,7 +98,7 @@ Takes in an image point and camera configuration data and outputs the
 estimated depth value. 
 '''
 def calculateImagePointDepth(x:float, y:float, clc:CameraLaserConfig) -> float:
-    return (clc.dlaser) / (np.tan(clc.thetaLaser) + np.tan(clc.thetaFov * ((x - (y - 0.5*clc.ymax)*np.tan(clc.phiLaser)) / (clc.xmax) - 0.5)))
+    return (clc.dLaser) / (np.tan(clc.thetaLaser) + np.tan(clc.thetaFov * ((x - (y - 0.5*clc.ymax)*np.tan(clc.phiLaser)) / (clc.xmax) - 0.5)))
 # end calculateImagePointDepth()
 
 '''

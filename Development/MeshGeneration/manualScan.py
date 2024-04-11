@@ -25,7 +25,7 @@ from imageTools import *
 CONSTANTS
 '''
 # Image folder properties
-IMG_FOLDER = "test2photos\\"
+IMG_FOLDER = "Development\\Mesh Generation\\test2photos\\"
 NUM_IMAGES = 12
 
 # Camera parameters
@@ -40,7 +40,7 @@ BRIGHT_THRESH = 200
 # Model generation parameters
 #               X, Y, Z
 POINT_OFFSET = [1, 0, 0]
-WRITE_MESH_TO_FILE = True
+WRITE_MESH_TO_FILE = False
 MESH_FILE_NAME = "mesh.stl"
 
 '''
@@ -73,7 +73,7 @@ def main():
     print("Processing with the following parameters:")
     print(f"Resolution: {clConfig.xmax} x {clConfig.ymax}")
     print(f"Camera horizontal FOV: {clConfig.thetaFov:.4f} rad")
-    print(f"Laser distance: {clConfig.dlaser}")
+    print(f"Laser distance: {clConfig.dLaser}")
     print(f"Laser rotation: Z-axis: {clConfig.thetaLaser:.4f} rad, Y-axis: {clConfig.phiLaser:.4f} rad")
     for frame in frames:
         # Calculate new points
@@ -109,6 +109,9 @@ def main():
     try:
         pointCloud = o3d.geometry.PointCloud()
         pointCloud.points = o3d.utility.Vector3dVector(points3d)
+        # Remove outliers
+        # pointCloud, _ = pointCloud.remove_statistical_outlier(nb_neighbors=20, std_ratio=3.0)
+        # pointCloud, _ = pointCloud.remove_radius_outlier(nb_points=10, radius=2)
     except Exception as e:
         print(f"Error making point cloud: {e}")
         badMesh = True
@@ -123,13 +126,29 @@ def main():
 
     # Create mesh
     try:
+        '''
         mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_poisson(
-            pointCloud,
+            pcd=pointCloud,
             depth=9,
             width=0,
             scale=1,
             linear_fit=True
         )[0]
+        
+        '''
+        mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_ball_pivoting(
+            pcd=pointCloud,
+            radii=o3d.utility.DoubleVector([1, 1.25, 1.5, 2])
+        )
+        
+        '''
+        mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_alpha_shape(
+            pcd=pointCloud,
+            alpha=1.1
+        )
+        '''
+
+        # Required for rendered shading
         mesh = o3d.geometry.TriangleMesh.compute_triangle_normals(mesh)
     except Exception as e:
         print(f"Error creating mesh: {e}")

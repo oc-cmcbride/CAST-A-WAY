@@ -52,7 +52,7 @@ if __name__ == "__main__":
     print("Scanning with the following parameters:")
     print(f"Resolution: {clConfig.xmax} x {clConfig.ymax}")
     print(f"Camera horizontal FOV: {clConfig.thetaFov:.4f} rad")
-    print(f"Laser distance: {clConfig.dlaser}")
+    print(f"Laser distance: {clConfig.dLaser}")
     print(f"Laser rotation: Z-axis: {clConfig.thetaLaser:.4f} rad, Y-axis: {clConfig.phiLaser:.4f} rad")
     running = True
     while running:
