@@ -14,20 +14,20 @@ from imageTools import *
 '''
 CONSTANTS
 '''
-WIDTH = 1280
-HEIGHT = 720
-H_FOV = 55
-D_LASER = 3.125
-THETA_LASER = 55
-PHI_LASER = 90-66.5
-BRIGHT_THRESH = 200
+WIDTH = 720
+HEIGHT = 1280
+H_FOV = 30.9375
+D_LASER = 1.539
+THETA_LASER = 20.775
+PHI_LASER = 25
+BRIGHT_THRESH = 250
 
 '''
 MAIN
 '''
 if __name__ == "__main__":
     # Create video capture object
-    cap = setupVideoCapture(1, WIDTH, HEIGHT, verbose=True)
+    cap = setupVideoCapture(1, verbose=True)
 
     # Create plot
     fig = plt.figure()
@@ -58,6 +58,7 @@ if __name__ == "__main__":
     while running:
         # Capture and display current image 
         ret, frame = cap.read()
+        frame = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)   # Rotate image since camera is rotated
         if not (frame is None):
             cv2.imshow("Camera", frame)
 

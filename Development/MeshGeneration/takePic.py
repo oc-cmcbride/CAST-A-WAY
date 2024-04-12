@@ -36,6 +36,7 @@ print("Press \'q\' to quit.")
 while running:
     # Capture and display current image
     ret, frame = cap.read()
+    frame = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)  # Rotate image since camera is sideways now 
     if not (frame is None):
         cv2.imshow("Window", frame)
 

@@ -35,10 +35,14 @@ CONSTANTS
 '''
 UNITS = "in"    # Distance units used 
 DISTANCES = [     # Array with distance values. The length of this array determines how many pictures will be taken. 
-   6.1189,
-   8.0089
+   2.5444,
+   2.9224,
+   3.3004,
+   3.6784,
+   4.0564,
+   4.4344
 ]
-HFOV = 55          # Horizontal FOV of the camera
+HFOV = 30.9375          # Horizontal FOV of the camera (degrees)
 
 '''
 estimatePhiLaser()
@@ -143,6 +147,7 @@ def main():
    while picsRemaining > 0:
       # Capture and display current image 
       ret, frame = cap.read()
+      frame = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)   # Rotate image because camera is rotated
       if not ret:
          print("ERROR: Webcam could not display frame!")
          break
@@ -153,6 +158,7 @@ def main():
       if (key & 0xFF) == ord(' '):
          # Save current frame
          if picsRemaining > 0:
+            # cv2.imwrite(f"configCapture{numImages - picsRemaining}.png")
             images.append(frame.copy())
             picsRemaining -= 1
             print(f"Image {numImages - picsRemaining} of {numImages} captured!")
@@ -179,6 +185,7 @@ def main():
       thetaLaser = np.average(thetaLaserPoints)
       phiLaser = np.average(phiLaserPoints)
       print(f"dLaser: {dLaser} {UNITS}, thetaLaser: {np.rad2deg(thetaLaser)} deg, phiLaser: {np.rad2deg(phiLaser)} deg")
+      print(f"Config values: {config}")
    else:
       print("ERROR: Not enough input images captured.")
    # end if picsRemaining == 0
