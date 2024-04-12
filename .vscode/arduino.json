@@ -1,6 +1,7 @@
 {
-    "board": "arduino:avr:uno",
-    "port": "COM6",
+    "board": "arduino:avr:mega",
+    "port": "COM3",
     "sketch": "Development\\Motor Control\\motorController\\motorController.ino",
-    "programmer": "arduino:arduinoasisp"
+    "programmer": "arduino:arduinoasisp",
+    "configuration": "cpu=atmega2560"
 }

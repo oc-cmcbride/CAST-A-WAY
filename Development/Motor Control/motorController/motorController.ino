@@ -4,15 +4,15 @@
 #define BAUD 115200
 
 // Socket rotation motor pins
-#define ROT_DIR_PIN 2
-#define ROT_STEP_PIN 3
+#define ROT_DIR_PIN 13
+#define ROT_STEP_PIN 10
 // Camera/Laser translation motor pins
-#define TRANS_DIR_PIN 4
-#define TRANS_STEP_PIN 5
+#define TRANS_DIR_PIN 12
+#define TRANS_STEP_PIN 11
 // Motor position sensors
-#define ROT_SENSOR 11
-#define TRANS_SENSOR_TOP_LIMIT 12
-#define TRANS_SENSOR_BOT_LIMIT 13
+#define ROT_SENSOR 2
+#define TRANS_SENSOR_TOP_LIMIT 3
+#define TRANS_SENSOR_BOT_LIMIT 4
 
 // Step delay (in microseconds)
 // #define STEP_DELAY_US 1000
