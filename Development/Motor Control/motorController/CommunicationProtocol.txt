@@ -1,5 +1,5 @@
 Motor Controller Communication Protocol
-Version 3
+Version 4
 
 This file shows the various commands that can be sent to and received from the motor controller. 
 All commands are from the perspective of the computer, so a "Send" command goes from the computer to the Arduino and a receive command goes from Arduino to computer. 
@@ -16,3 +16,4 @@ C	            Send	        No	            Stops all continuously repeating comma
 1	            Receive	        N/A	            Indicates the rotation motor sensor has been activated 
 2	            Receive	        N/A	            Indicates the top-limit translation motor sensor has been activated
 3	            Receive	        N/A	            Indicates the bottom-limit translation motor sensor has been activated
+p               Send            No              Polls the controller to send back the current status of the sensors 
