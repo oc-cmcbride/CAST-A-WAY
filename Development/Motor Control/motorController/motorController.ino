@@ -144,6 +144,7 @@ void executeCommand(char command) {
         if (Serial.availableForWrite() >= 5) {
           Serial.println(msg);
         }
+        rotSensorActive = transSensorTopActive = transSensorBotActive = 0;
         break;
       default:
         // Serial.write("Unrecognized command: ");
@@ -209,9 +210,6 @@ void checkSensors() {
     // Serial.write('1');
     rotSensorActive = 1;
   }
-  else {
-    rotSensorActive = 0;
-  }
 
   // Check translation motor sensors 
   readVal = digitalRead(TRANS_SENSOR_TOP_LIMIT);
@@ -219,16 +217,10 @@ void checkSensors() {
     // Serial.write('2');
     transSensorTopActive = 1;
   }
-  else {
-    transSensorTopActive = 0;
-  }
 
   readVal = digitalRead(TRANS_SENSOR_BOT_LIMIT);
   if (readVal == HIGH && Serial.availableForWrite()) {
     // Serial.write('3');
     transSensorBotActive = 1;
-  }
-  else {
-    transSensorBotActive = 0;
   }
 }
