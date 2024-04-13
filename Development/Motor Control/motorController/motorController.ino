@@ -31,6 +31,10 @@ int actionCounters[] = {0, 0, 0, 0};
 #define ACTION_t 2
 #define ACTION_T 3
 
+// Current sensor states 
+int rotSensorActive = 0;
+int transSensorTopActive = 0;
+int transSensorBotActive = 0;
 
 
 void setup() {
@@ -125,6 +129,22 @@ void executeCommand(char command) {
           actionCounters[i] = 0;
         }
         break;
+      // Poll for sensor inputs
+      case 'p':
+        String msg = "";
+        if (rotSensorActive) {
+          msg += "1";
+        }
+        if (transSensorTopActive) {
+          msg += "2";
+        }
+        if (transSensorBotActive) {
+          msg += "3";
+        }
+        if (Serial.availableForWrite() >= 5) {
+          Serial.println(msg);
+        }
+        break;
       default:
         // Serial.write("Unrecognized command: ");
         // Serial.write(command);
@@ -186,18 +206,29 @@ void checkSensors() {
   readVal = digitalRead(ROT_SENSOR);
   // Recall that the photointerrupter is set HIGH by default! 
   if (readVal == LOW && Serial.availableForWrite()) {
-    Serial.write('1');
+    // Serial.write('1');
+    rotSensorActive = 1;
   }
-
+  else {
+    rotSensorActive = 0;
+  }
 
   // Check translation motor sensors 
   readVal = digitalRead(TRANS_SENSOR_TOP_LIMIT);
   if (readVal == HIGH && Serial.availableForWrite()) {
-    Serial.write('2');
+    // Serial.write('2');
+    transSensorTopActive = 1;
+  }
+  else {
+    transSensorTopActive = 0;
   }
 
   readVal = digitalRead(TRANS_SENSOR_BOT_LIMIT);
   if (readVal == HIGH && Serial.availableForWrite()) {
-    Serial.write('3');
+    // Serial.write('3');
+    transSensorBotActive = 1;
+  }
+  else {
+    transSensorBotActive = 0;
   }
 }
