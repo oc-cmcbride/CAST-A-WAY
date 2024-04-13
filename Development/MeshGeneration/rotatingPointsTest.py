@@ -17,7 +17,7 @@ from imageTools import *
 CONSTANTS
 '''
 # Image file path
-IMAGE_FILE = "Development\\Mesh Generation\\test2photos\\capture003.png"
+IMAGE_FILE = "Development\\MeshGeneration\\test2photos\\capture003.png"
 
 # Camera parameters
 WIDTH = 1280
@@ -30,7 +30,7 @@ BRIGHT_THRESH = 200
 
 # Model generation parameters
 NUM_STEPS = 10
-ROT_INIT = [0, 0, 0]
+ROT_INIT = [-40, 0, 0]
 ROT_STEP = [0, 0, 10]
 
 '''
