@@ -15,27 +15,30 @@ import cv2
 class DataCollection:
     def __init__(self):
 
-        self.image_folder = "test1photos\\"
+        self.image_folder = "scan_photos\\"
+        self.indexing_file_name = "indexing.txt"
 
         # Camera parameters
-        width = 1280
-        height = 720
-        horizontal_fov = 55
+        width = 720
+        height = 1280
+        horizontal_fov = 30.9375
         self.cap = cv2.VideoCapture(1)
-        self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
-        self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
+        self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)       # Hardcoding to avoid ambiguity 
+        self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)     # Hardcoding to avoid ambiguity 
 
         # laser parameters
-        dist_laser = 3.125
-        theta_laser = 12.5
-        phi_laser = 90 - 66.5
+        dist_laser = 1.539
+        theta_laser = 20.775
+        phi_laser = 25
 
         # image parameters
-        self.bright_thresh = 200
+        self.bright_thresh = 250
         self.index_picture = 0
-        #                    X, Y, Z
-        self.point_offset = [1, 0, 0]
         self.image_name = 'capture'
+
+        # physical configuration parameters 
+        self.deg_per_step = 360 / 200
+        self.downward_camera_angle = 49     # how many degrees the camera is looking downard into the socket
 
         # Set up camera/laser config data
         self.clConfig = CameraLaserConfig(
@@ -56,6 +59,8 @@ class DataCollection:
         return self.points3d
 
     def get_images(self):
+        # Clear indexing file 
+        open(self.indexing_file_name, 'w').close()
         # Runs the motor turning with image taking
         driver = Driver()
         scan = True
@@ -64,8 +69,8 @@ class DataCollection:
             driver.move_to_start()
             while not driver.rot_sensor:
                 self.get_image()
-                with open('indexing.txt', 'w') as f:
-                    f.write(f'{self.index_picture}, {driver.position}, {driver.position*driver.step_cm}\n')
+                with open(self.indexing_file_name, 'a') as f:
+                    f.write(f'{self.index_picture - 1},{driver.position[0]},{driver.position[1]},{driver.position[0]*driver.step_cm[0]},{driver.position[1]*driver.step_cm[1]}\n')
                 driver.rotate_left()
                 driver.check_sensors()
             driver.translate_up()
@@ -74,18 +79,24 @@ class DataCollection:
 
     def get_image(self):
         ret, frame = self.cap.read()
+        frame = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)   # rotate image since camera is sideways
         if not (frame is None):
-            cv2.imwrite(f"{self.image_name}{self.index_picture :03d}.png", frame)
+            cv2.imwrite(f"{self.image_folder}{self.image_name}{self.index_picture :03d}.png", frame)
             self.index_picture += 1
         print('get_image')
 
     def get_image_points(self):
-        # Read in frames from image files
+        # Read in frames from image files and position data from indexing file 
         frames = []
+        image_data = []
         num_images = self.index_picture
 
-        for i in range(num_images):
-            frames.append(cv2.imread(f"{self.image_folder}capture{i:03d}.png"))
+        with open(self.indexing_file_name, 'r') as f:
+            for i in range(num_images):
+                frames.append(cv2.imread(f"{self.image_folder}capture{i:03d}.png"))
+                data_entry = f.readline().split(",")
+                image_data.append([float(val) for val in data_entry])
+
 
         # Keep track of which frame is being scanned
         frame_count = 0
@@ -96,7 +107,11 @@ class DataCollection:
         print(f"Camera horizontal FOV: {self.clConfig.thetaFov:.4f} rad")
         print(f"Laser distance: {self.clConfig.dLaser}")
         print(f"Laser rotation: Z-axis: {self.clConfig.thetaLaser:.4f} rad, Y-axis: {self.clConfig.phiLaser:.4f} rad")
-        for frame in frames:
+        for i in range(len(frames)):
+            # Get frame and associated data
+            frame = frames[i]
+            frameData = image_data[i]
+
             # Calculate new points
             points2d = detectLine(frame, self.bright_thresh)
 
@@ -108,10 +123,36 @@ class DataCollection:
                 depth = calculateImagePointDepth(x, y, self.clConfig)
                 new_point = imageToCameraCoords(x, y, depth, self.clConfig)
 
-                # Apply offset
-                new_point[0] += self.point_offset[0] * frame_count
-                new_point[1] += self.point_offset[1] * frame_count
-                new_point[2] += self.point_offset[2] * frame_count
+                # Calculate angles 
+                alpha = np.deg2rad(self.downward_camera_angle)
+                gamma = np.deg2rad(frameData[3] * self.deg_per_step)
+
+                # Generate arrays for multiplication
+                Pcc = [ # Point Camera Coordinate
+                    [new_point[0]],
+                    [new_point[1]],
+                    [new_point[2]]
+                ]
+                Rx = [ # Rotation x matrix
+                    [1, 0, 0],
+                    [0, np.cos(alpha), -np.sin(alpha)],
+                    [0, np.sin(alpha), np.cos(alpha)]
+                ]
+                Rz = [ # Rotation z matrix
+                    [np.cos(gamma), -np.sin(gamma), 0],
+                    [np.sin(gamma), np.cos(gamma), 0],
+                    [0, 0, 1]
+                ]
+
+                # Perform multiplications to get world coordinates (z rotation, then x rotation)
+                Pwc = np.matmul(Rx, Pcc)
+                Pwc = np.matmul(Rz, Pwc)
+
+                # Unpack and add point to 3D points
+                new_point = [p[0] for p in Pwc]
+
+                # Apply vertical offset
+                new_point[1] += frameData[4]
 
                 # Add to point list
                 self.points3d.append(new_point)

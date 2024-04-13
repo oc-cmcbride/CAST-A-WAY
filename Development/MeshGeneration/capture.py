@@ -95,5 +95,7 @@ class Driver:
             self.bottom_button = True
 
     def check_scan_complete(self):
-        print('idk how we do this')
-        return False
+        # print('idk how we do this')
+        # return False
+        # TODO: Update this to reflect actually finishing the scan
+        return self.rot_sensor  # Scan finishes after only one rotation 
