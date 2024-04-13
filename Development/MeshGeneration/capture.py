@@ -10,7 +10,7 @@ import time
 import serial
 ser = serial.Serial('COM3', 115200)
 repT = 10000
-repR = 20
+repR = 1
 charD = 't'
 charU = 'T'
 charR = 'R'
@@ -20,6 +20,7 @@ charL = 'r'
 class Driver:
     def __init__(self):
         self.position = [0, 0]  # [rot, trans]
+        self.step_cm = [1*repR, .000635*repT]
         self.update_position_rot = 2  # degrees
         self.update_position_trans = 1  # inches
         self.character = 'T'
@@ -66,18 +67,14 @@ class Driver:
 
     def reset(self):
         # back to top
-        count = 0
-        while count != 2:
+        while not self.top_button:
             self.translate_up()
             self.check_sensors()
-            count += 1
 
         # back to center
-        count = 0
-        while count != 2:
+        while not self.rot_sensor:
             self.rotate_left()
             self.check_sensors()
-            count += 1
 
         self.position = [0, 0]
         print('reset')
@@ -88,14 +85,14 @@ class Driver:
         self.bottom_button = False
         self.rot_sensor = False
         # serial read into this
-        while ser.in_waiting > 0:
-            read_data = ser.readline().strip().decode()
-            if '1' in read_data:
-                self.rot_sensor = True
-            if '2' in read_data:
-                self.top_button = True
-            if '3' in read_data:
-                self.bottom_button = True
+        ser.write(b'p')
+        read_data = ser.readline().strip().decode()
+        if '1' in read_data:
+            self.rot_sensor = True
+        if '2' in read_data:
+            self.top_button = True
+        if '3' in read_data:
+            self.bottom_button = True
 
     def check_scan_complete(self):
         print('idk how we do this')

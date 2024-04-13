@@ -56,6 +56,7 @@ class DataCollection:
         return self.points3d
 
     def get_images(self):
+        # Runs the motor turning with image taking
         driver = Driver()
         scan = True
         rotate = True
@@ -63,6 +64,8 @@ class DataCollection:
             driver.move_to_start()
             while not driver.rot_sensor:
                 self.get_image()
+                with open('indexing.txt', 'w') as f:
+                    f.write(f'{self.index_picture}, {driver.position}, {driver.position*driver.step_cm}\n')
                 driver.rotate_left()
                 driver.check_sensors()
             driver.translate_up()
@@ -70,10 +73,10 @@ class DataCollection:
         print('get images')
 
     def get_image(self):
-        # ret, frame = self.cap.read()
-        # if not (frame is None):
-        #     cv2.imwrite(f"{self.image_name}{index_picture:03d}.png", frame)
-        #     self.index_picture += 1
+        ret, frame = self.cap.read()
+        if not (frame is None):
+            cv2.imwrite(f"{self.image_name}{self.index_picture :03d}.png", frame)
+            self.index_picture += 1
         print('get_image')
 
     def get_image_points(self):

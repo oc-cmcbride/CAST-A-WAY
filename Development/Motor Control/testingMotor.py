@@ -9,8 +9,8 @@ counter = 0
 
 def send_data():
     global counter
-    character = 'T'  # Character to send
-    repetitions = 200  # Number of times to send the character
+    character = 't'  # Character to send
+    repetitions = 100000  # Number of times to send the character
 
     # Send the character the specified number of times
     ser.write((character * repetitions).encode())  # Send the character repeated 50 times as bytes
