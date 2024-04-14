@@ -68,13 +68,13 @@ class Driver:
     def reset(self):
         # back to top
         while not self.top_button:
-            self.translate_up()
             self.check_sensors()
+            self.translate_up()
 
         # back to center
         while not self.rot_sensor:
-            self.rotate_left()
             self.check_sensors()
+            self.rotate_left()
 
         self.position = [0, 0]
         print('reset')
@@ -98,4 +98,4 @@ class Driver:
         # print('idk how we do this')
         # return False
         # TODO: Update this to reflect actually finishing the scan
-        return self.rot_sensor  # Scan finishes after only one rotation 
+        return self.top_button  

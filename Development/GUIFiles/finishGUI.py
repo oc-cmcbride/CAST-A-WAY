@@ -23,7 +23,7 @@ class finishedScreen(QFrame):
         self.file_path = None
         self.mesh = None
         # self.directory_path = r'C:\Users\medem\OneDrive\Documents\GitHub\CAST-A-WAY\Development\MeshGeneration'
-        self.directory_path = os.getcwd() + r'\MeshGeneration'
+        self.directory_path = os.getcwd() + r'\Development\MeshGeneration'
         self.window = window
         self.setGeometry(100, 100, 1600, 1200)
 

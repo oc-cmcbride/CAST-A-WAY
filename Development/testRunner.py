@@ -6,8 +6,8 @@ def GetImages(dc: DataCollection):
     dc.get_images()
     print("done'd")
 
-def GetPoints(dc: DataCollection):
-    dc.index_picture = 55
+def GetPoints(dc: DataCollection, numPics):
+    dc.index_picture = numPics
     dc.get_image_points()
     print("done'd again")
 
@@ -20,7 +20,7 @@ def main():
     dc = DataCollection()
     mc = MeshCreate()
     # GetImages(dc)
-    GetPoints(dc)
+    GetPoints(dc, 327)
     GenerateMesh(mc, dc.points3d)
 
 if __name__ == "__main__":

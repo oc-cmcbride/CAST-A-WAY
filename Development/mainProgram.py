@@ -16,8 +16,9 @@ class FinalProgram:
         sys.exit(self.app.exec_())
 
     def start(self):
-        self.mesh.start()
         print('Started')
+        self.mesh.start()
+        print('Finished')
 
     def get_file(self):
         return 'mesh'

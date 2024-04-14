@@ -22,9 +22,13 @@ class DataCollection:
         width = 720
         height = 1280
         horizontal_fov = 30.9375
+        print("Acquiring camera resource...")
         self.cap = cv2.VideoCapture(1)
+        print("Setting camera width...")
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)       # Hardcoding to avoid ambiguity 
+        print("Setting camera height...")
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)     # Hardcoding to avoid ambiguity 
+        print("Set camera settings!")
 
         # laser parameters
         dist_laser = 1.539
@@ -68,11 +72,11 @@ class DataCollection:
         while scan:
             driver.move_to_start()
             while not driver.rot_sensor:
+                driver.rotate_left()
+                driver.check_sensors()
                 self.get_image()
                 with open(self.indexing_file_name, 'a') as f:
                     f.write(f'{self.index_picture - 1},{driver.position[0]},{driver.position[1]},{driver.position[0]*driver.step_cm[0]},{driver.position[1]*driver.step_cm[1]}\n')
-                driver.rotate_left()
-                driver.check_sensors()
             driver.translate_up()
             scan = driver.check_scan_complete()
         print('get images')
